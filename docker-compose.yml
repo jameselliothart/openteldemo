@@ -1,0 +1,45 @@
+version: '3'
+services:
+  amps:
+    build:
+      context: ./amps-docker
+    ports:
+      - "9000:9000"
+    volumes:
+      - amps_data:/var/amps
+
+  # jaeger:
+  #   image: jaegertracing/all-in-one:latest
+  #   ports:
+  #     - "16686:16686"
+  #     - "14268:14268"
+
+  # marker:
+  #   build: ./marker
+  #   depends_on:
+  #     - amps
+  #     - jaeger
+  #   environment:
+  #     - AMPS_HOST=amps:9000
+  #     - JAEGER_ENDPOINT=[invalid url, do not cite]
+
+  # processor:
+  #   build: ./processor
+  #   depends_on:
+  #     - amps
+  #     - jaeger
+  #   environment:
+  #     - AMPS_HOST=amps:9000
+  #     - JAEGER_ENDPOINT=[invalid url, do not cite]
+
+  # persister:
+  #   build: ./persister
+  #   depends_on:
+  #     - amps
+  #     - jaeger
+  #   environment:
+  #     - AMPS_HOST=amps:9000
+  #     - JAEGER_ENDPOINT=[invalid url, do not cite]
+
+volumes:
+  amps_data:
