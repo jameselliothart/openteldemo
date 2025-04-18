@@ -1,0 +1,54 @@
+<AMPSConfig>
+    <Name>amps-demo</Name>
+
+    <!-- Logging configuration -->
+    <Logging>
+        <Target>
+            <Protocol>file</Protocol>
+            <Level>info</Level>
+            <FileName>/var/log/amps/amps.log</FileName>
+        </Target>
+    </Logging>
+
+    <!-- Transports for client connections -->
+    <Transports>
+        <Transport>
+            <Name>client-tcp</Name>
+            <Type>tcp</Type>
+            <InetAddr>0.0.0.0:9007</InetAddr>
+            <MessageType>json</MessageType>
+        </Transport>
+        <Transport>
+            <Name>python-tcp</Name>
+            <Type>tcp</Type>
+            <InetAddr>0.0.0.0:9008</InetAddr>
+            <MessageType>json</MessageType>
+        </Transport>
+    </Transports>
+
+    <!-- Admin interface for monitoring -->
+    <Admin>
+        <Transport>
+            <Type>http</Type>
+            <InetAddr>0.0.0.0:8085</InetAddr>
+        </Transport>
+    </Admin>
+
+    <!-- Message store for topics (in-memory for demo) -->
+    <Topics>
+        <Topic>
+            <Name>internal</Name>
+            <MessageType>json</MessageType>
+            <Storage>
+                <Type>memory</Type>
+            </Storage>
+        </Topic>
+        <Topic>
+            <Name>external</Name>
+            <MessageType>json</MessageType>
+            <Storage>
+                <Type>memory</Type>
+            </Storage>
+        </Topic>
+    </Topics>
+</AMPSConfig>

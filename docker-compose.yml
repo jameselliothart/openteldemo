@@ -1,12 +1,16 @@
-version: '3'
 services:
   amps:
     build:
       context: ./amps-docker
+      dockerfile: Dockerfile
     ports:
-      - "9000:9000"
+      - "9007:9007" # WebSocket for React.js client
+      - "9008:9008" # TCP for Python services
+      - "8085:8085" # Admin interface
     volumes:
-      - amps_data:/var/amps
+      - amps_logs:/var/log/amps
+    networks:
+      - demo-network
 
   # jaeger:
   #   image: jaegertracing/all-in-one:latest
@@ -42,4 +46,8 @@ services:
   #     - JAEGER_ENDPOINT=[invalid url, do not cite]
 
 volumes:
-  amps_data:
+  amps_logs:
+
+networks:
+  demo-network:
+    driver: bridge
