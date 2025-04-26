@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Client } from './lib/ampsWrapper';
 import { tracer } from './tracing';
 import { v4 as uuidv4 } from 'uuid';
+import { Client } from './amps';
 
 function App() {
   const [client, setClient] = useState(null);
@@ -23,17 +23,18 @@ function App() {
         setClient(ampsClient);
         setStatus('Connected to AMPS');
       } catch (err) {
-        console.error('AMPS connection error:', err);
-        setStatus('Connection failed');
+        console.error('AMPS connection error:', err, 'Details:', JSON.stringify(err));
+        setStatus(`Connection failed: ${err.message}`);
       }
     })();
 
     return () => {
       if (client) {
+        console.log('Disconnecting AMPS client');
         client.disconnect();
       }
     };
-  }, [client]);
+  }, []);
 
   // Publish message to AMPS with tracing
   const handlePublish = () => {
@@ -45,28 +46,28 @@ function App() {
     // Start a new span for the publish action
     const span = tracer.startSpan('publish-message');
     const messageId = uuidv4();
-    const message = { data: 'some data', messageId };
-
-    // Inject trace context into AMPS message headers
-    const headers = {};
     const traceContext = span.spanContext();
-    headers['CorrelationId'] = `${traceContext.traceId}-${traceContext.spanId}`;
+    const message = {
+      data: 'some data',
+      messageId,
+      CorrelationId: `${traceContext.traceId}-${traceContext.spanId}`, // Embed CorrelationId in payload
+    };
 
     // Publish message to 'internal' topic
-    client
-      .publish('internal', JSON.stringify(message), headers)
-      .then(() => {
-        span.setAttribute('message.id', messageId);
-        span.addEvent('Message published to internal topic');
-        span.end();
-        setStatus(`Published message ${messageId}`);
-      })
-      .catch((err) => {
-        span.recordException(err);
-        span.setStatus({ code: 2, message: err.message });
-        span.end();
-        setStatus(`Publish failed: ${err.message}`);
-      });
+    try {
+      client.publish('internal', JSON.stringify(message));
+      console.log('Message published:', message);
+      span.setAttribute('message.id', messageId);
+      span.addEvent('Message published to internal topic');
+      span.end();
+      setStatus(`Published message ${messageId}`);
+    } catch (err) {
+      console.error('Publish error:', err);
+      span.recordException(err);
+      span.setStatus({ code: 2, message: err.message });
+      span.end();
+      setStatus(`Publish failed: ${err.message}`);
+    }
   };
 
   return (
