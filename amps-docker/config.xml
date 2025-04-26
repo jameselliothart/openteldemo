@@ -15,6 +15,7 @@
         <Transport>
             <Name>client-tcp</Name>
             <Type>tcp</Type>
+            <Protocol>websocket</Protocol>
             <InetAddr>0.0.0.0:9007</InetAddr>
             <MessageType>json</MessageType>
         </Transport>
