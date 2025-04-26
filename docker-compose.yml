@@ -22,14 +22,19 @@ services:
     networks:
       - demo-network
 
-  # marker:
-  #   build: ./marker
-  #   depends_on:
-  #     - amps
-  #     - jaeger
-  #   environment:
-  #     - AMPS_HOST=amps:9000
-  #     - JAEGER_ENDPOINT=[invalid url, do not cite]
+  marker:
+    build:
+      context: ./marker
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # React dev server
+    depends_on:
+      - amps
+      - jaeger
+    environment:
+      - NODE_ENV=development
+    networks:
+      - demo-network
 
   # processor:
   #   build: ./processor
