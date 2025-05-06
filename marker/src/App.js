@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { tracer } from './tracing';
+import { initializeTracer } from './tracing';
 import { v4 as uuidv4 } from 'uuid';
 import { Client } from './amps';
 
@@ -44,6 +44,7 @@ function App() {
     }
 
     // Start a new span for the publish action
+    const tracer = initializeTracer();
     const span = tracer.startSpan('publish-message');
     const messageId = uuidv4();
     const traceContext = span.spanContext();
