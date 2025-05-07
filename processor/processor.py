@@ -1,6 +1,5 @@
 import json
 import logging
-import asyncio
 import AMPS
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -64,7 +63,7 @@ def process(client):
                     span.record_exception(e)
                     span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
                     span.set_attribute('message.id', data.get('messageId', 'unknown') if 'data' in locals() else 'unknown')
-            except AMPSException as e:
+            except AMPS.AMPSException as e:
                 logger.error(f'AMPS error: {e}')
                 with tracer.start_as_current_span('process-message') as span:
                     span.record_exception(e)
@@ -76,7 +75,6 @@ def process(client):
                     span.record_exception(e)
                     span.set_status(trace.StatusCode.ERROR, str(e))
                     span.set_attribute('message.id', data.get('messageId', 'unknown') if 'data' in locals() else 'unknown')
-
 
     except AMPS.AMPSException as e:
         logger.error(f'AMPS subscription error: {e}')
