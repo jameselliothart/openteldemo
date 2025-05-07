@@ -52,6 +52,10 @@ def process(client):
                     logger.info(f'Processing message {data.get("messageId")}')
                     data['processed'] = True
 
+                    # Update CorrelationId with current span's traceId and spanId
+                    span_context = span.get_span_context()
+                    data['CorrelationId'] = f'{format(span_context.trace_id, "032x")}-{format(span_context.span_id, "016x")}'
+
                     # Publish to 'external' topic
                     client.publish('external', json.dumps(data))
                     logger.info(f'Published to external: {data.get("messageId")}')
