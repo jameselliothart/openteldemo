@@ -37,7 +37,7 @@ function App() {
   }, []);
 
   // Publish message to AMPS with tracing
-  const handlePublish = () => {
+  const handlePublish = (mockError) => {
     if (!client) {
       setStatus('Not connected to AMPS');
       return;
@@ -49,7 +49,7 @@ function App() {
     const messageId = uuidv4();
     const traceContext = span.spanContext();
     const message = {
-      data: 'some data',
+      data: mockError ? 'FAIL' : 'some data',
       messageId,
       CorrelationId: `${traceContext.traceId}-${traceContext.spanId}`, // Embed CorrelationId in payload
     };
@@ -75,8 +75,11 @@ function App() {
     <div style={{ padding: '20px' }}>
       <h1>Marker Client</h1>
       <p>Status: {status}</p>
-      <button onClick={handlePublish} disabled={!client}>
+      <button onClick={() => handlePublish(false)} disabled={!client}>
         Publish
+      </button>
+      <button onClick={() => handlePublish(true)} disabled={!client}>
+        Publish Mock Error
       </button>
     </div>
   );

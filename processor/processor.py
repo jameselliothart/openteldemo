@@ -50,6 +50,8 @@ def process(client):
 
                     # Process the message
                     logger.info(f'Processing message {data.get("messageId")}')
+                    if data.get("data") == 'FAIL':
+                        raise AttributeError('Failed to process message')
                     data['processed'] = True
 
                     # Update CorrelationId with current span's traceId and spanId
