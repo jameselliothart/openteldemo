@@ -6,14 +6,16 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('processor')
 
-# Configure OpenTelemetry
-trace.set_tracer_provider(TracerProvider())
+# Configure OpenTelemetry with service name
+resource = Resource(attributes={"service.name": "processor"})
+trace.set_tracer_provider(TracerProvider(resource=resource))
 tracer = trace.get_tracer('processor-tracer')
 otlp_exporter = OTLPSpanExporter(endpoint='http://jaeger:4318/v1/traces')
 span_processor = BatchSpanProcessor(otlp_exporter)
