@@ -59,14 +59,17 @@ services:
     networks:
       - demo-network
 
-  # persister:
-  #   build: ./persister
-  #   depends_on:
-  #     - amps
-  #     - jaeger
-  #   environment:
-  #     - AMPS_HOST=amps:9000
-  #     - JAEGER_ENDPOINT=[invalid url, do not cite]
+  persister:
+    build:
+      context: ./persister
+      dockerfile: Dockerfile
+    depends_on:
+      - amps
+      - jaeger
+    volumes:
+      - ./persister/data:/app/data
+    networks:
+      - demo-network
 
 volumes:
   amps_logs:
