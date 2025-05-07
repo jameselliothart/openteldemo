@@ -49,14 +49,15 @@ services:
     networks:
       - demo-network
 
-  # processor:
-  #   build: ./processor
-  #   depends_on:
-  #     - amps
-  #     - jaeger
-  #   environment:
-  #     - AMPS_HOST=amps:9000
-  #     - JAEGER_ENDPOINT=[invalid url, do not cite]
+  processor:
+    build:
+      context: ./processor
+      dockerfile: Dockerfile
+    depends_on:
+      - amps
+      - jaeger
+    networks:
+      - demo-network
 
   # persister:
   #   build: ./persister
